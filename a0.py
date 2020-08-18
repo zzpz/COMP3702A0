@@ -1,6 +1,8 @@
 class A0:
     pass
 
+
+
 class State():
 
 
@@ -16,6 +18,30 @@ class State():
     def __str__(self):
         return self.state
 
+    def __repr__(self):
+        return self.state
+
+class Node:
+    state: State
+    action_states: {str : State}
+    complete: bool
+
+    def __init__(self,state):
+        self.state = state
+        self.action_states = None
+        self.complete = False
+
+    def __init__(self,state,action_states):
+        self.state = state
+        self.action_states = action_states
+        self.complete = True
+
+
+    def reachable_states(self):
+        return self.action_states.values()
+
+    def possible_actions(self):
+        return self.action_states.keys()
 
 def swap(s, i, j):
         lst = list(s)
@@ -88,7 +114,6 @@ class Transition():
         # move one space left
         # 'validate'
         # return the state that was reached
-        pass
 
     def right(s, position):
         try:
@@ -166,23 +191,27 @@ def transition(state, action):
 
 
 
+def get_next_states_given_action(state):
+    reached_states_by_action = dict([])
 
-
-
-
-
-
+    actions = ['U','D','L','R']
+    for action in actions:
+        r = transition(state, action)
+        reached_states_by_action[action] = r
+    return reached_states_by_action
 # program
 
 def main():
     state = State("_12345678")
-    action = 'U'
-    r = transition(state,action)
-    print(r)
+    state_2 = "312_45678"
+    d = get_next_states_given_action(state)
+    n = Node(state , d)
+    print(n.complete)
+
+
 
 if __name__ == '__main__':
     main()
-
 
 
 #
