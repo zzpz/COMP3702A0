@@ -1,19 +1,14 @@
-class A0:
-    pass
-
-
-
 class State():
 
-
-
-    state: str
 
     def __init__(self,state_string):
         try:
             self.state = state_string
         except:
             self.state = "12345678_"
+
+
+    state: str
 
     def __str__(self):
         return self.state
@@ -62,6 +57,19 @@ class Transition():
         try:
             if position == 'T':
                 return s.state
+
+            if position == 'R':
+                if s.state.find('_') < 3:
+                    return s.state
+                # bad
+                else:
+                    percepts = s.state
+                    index = percepts.find('_')
+                    swapindex = index-3
+                    if(swapindex < 0):
+                        return None
+                    r = swap(percepts,index,swapindex)
+                    return r
             else:
                 percepts = s.state
                 index = percepts.find('_')
@@ -85,10 +93,16 @@ class Transition():
         try:
             if position == 'B':
                 return s.state
+            if position == 'R':
+                if s.state.find('_') > 7:
+                    return s.state
             else:
                 percepts = s.state
                 index = percepts.find('_')
-                r = swap(percepts, index, index + 3)
+                swapindex = index+3
+                if (swapindex > 8): #magic numbers
+                    return None
+                r = swap(percepts, index, swapindex)
                 return r
         except:
             return None
@@ -103,10 +117,12 @@ class Transition():
             if position == 'L':
                 return s.state
             else:
-                #TODO: consider not having this and hard code edge cases?
                 percepts = s.state
                 index = percepts.find('_')
-                r = swap(percepts, index, index - 1)
+                swapindex = index - 1
+                if (swapindex < 0):
+                    return None
+                r = swap(percepts, index, swapindex)
                 return r
         except:
             return None
@@ -126,7 +142,11 @@ class Transition():
             else:
                 percepts = s.state
                 index = percepts.find('_')
-                r = swap(percepts, index, index + 1)
+
+                swapindex = index + 1
+                if (swapindex > 8):
+                    return None
+                r = swap(percepts, index, swapindex)
                 return r
         except:
             return None
@@ -173,23 +193,23 @@ def transition(state, action):
     if index%3==2:
         position = 'R'
         r = Transition.processor(callback,state,position)
-        reached_states.add(r)
+        if r: reached_states.add(r)
 
 
     elif index<3:
         position = 'T'
         r= Transition.processor(callback,state,position)
-        reached_states.add(r)
+        if r: reached_states.add(r)
 
 
     elif index>5:
         position = 'B'
         r= Transition.processor(callback,state,position)
-        reached_states.add(r)
+        if r: reached_states.add(r)
 
 
     if(len(reached_states) != 1):
-        return
+        return None
     else:
         return reached_states.pop()
 
@@ -222,34 +242,3 @@ def compare(state_1, state_2):
 
     except:
         return None
-
-
-def main():
-    state = State("_12345678")
-    state_2 = State("_12345678")
-
-    ##get inputs
-
-
-    ##result = compare(input1,input2)
-    print(compare(state,state_2))
-
-
-
-
-
-if __name__ == '__main__':
-    main()
-
-
-#
-# for reachable_state in transitions :
-#     if reachable_state == 'up':
-#         print('up')
-#     if reachable_state == 'down':
-#         print('down')
-#     if reachable_state == 'left':
-#         print('left')
-#     if reachable_state == 'right':
-#         print('right')
-#
